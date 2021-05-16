@@ -4,6 +4,9 @@ fastify.register(
     require('fastify-compress'),
     { global: true }
 )
+fastify.register(require('fastify-cors'), {
+    // put your options here
+})
 
 let rawdata = fs.readFileSync(require.resolve('./db.json'));
 let corsi = JSON.parse(rawdata);
