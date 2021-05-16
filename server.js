@@ -94,6 +94,10 @@ fastify.get('/master', function (request, reply) {
     reply.send(JSON.stringify(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n)));
 })
 
+fastify.get('/', function (request, reply){
+    reply.send(`Up and running`)
+})
+
 // Run the server!
 fastify.listen(port, function (err, address) {
     if (err) {
