@@ -99,7 +99,7 @@ fastify.get('/', function (request, reply){
 })
 
 // Run the server!
-fastify.listen(port, function (err, address) {
+fastify.listen(port, '0.0.0.0',function (err, address) {
     if (err) {
         fastify.log.error(err)
         process.exit(1)
