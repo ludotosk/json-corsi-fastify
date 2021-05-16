@@ -1,5 +1,15 @@
 const fs = require('fs')
-const fastify = require('fastify')()
+const path = require('path');
+
+const key = path.dirname('json-corsi-fastify.key');
+const cert = path.dirname('json-corsi-fastify.crs')
+
+const fastify = require('fastify')({
+    https: {
+        key: fs.readFileSync(path.resolve(__dirname, './key.pem')),
+        cert: fs.readFileSync(path.resolve(__dirname, './cert.pem'))
+    }
+})
 fastify.register(
     require('fastify-compress'),
     { global: true }
