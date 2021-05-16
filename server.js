@@ -1,5 +1,9 @@
 const fs = require('fs')
 const fastify = require('fastify')()
+fastify.register(
+    require('fastify-compress'),
+    { global: true }
+)
 
 let rawdata = fs.readFileSync(require.resolve('./db.json'));
 let corsi = JSON.parse(rawdata);
@@ -53,7 +57,7 @@ fastify.get('/corsi', function (request, reply) {
         })
     }
 
-    reply.send(JSON.stringify(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n)));
+    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
 })
 
 fastify.get('/master', function (request, reply) {
@@ -91,15 +95,15 @@ fastify.get('/master', function (request, reply) {
         })
     }
 
-    reply.send(JSON.stringify(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n)));
+    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
 })
 
-fastify.get('/', function (request, reply){
+fastify.get('/', function (request, reply) {
     reply.send(`Up and running`)
 })
 
 // Run the server!
-fastify.listen(port, '0.0.0.0',function (err, address) {
+fastify.listen(port, '0.0.0.0', function (err, address) {
     if (err) {
         fastify.log.error(err)
         process.exit(1)
