@@ -13,20 +13,6 @@ let corsi = JSON.parse(rawdata);
 
 const port = process.env.PORT || 3000;
 
-fastify.addHook('preHandler', async (req, reply) => {
-    const isHttps = ((req.headers['x-forwarded-proto'] || '').substring(0, 5) === 'https')
-    if (isHttps) {
-        return
-    }
-
-    const { method, url } = req.req
-
-    if (method && ['GET', 'HEAD'].includes(method)) {
-        const host = req.headers.host || req.hostname
-        reply.redirect(301, `https://${host}${url}`)
-    }
-})
-
 fastify.get('/corsi', function (request, reply) {
     query = request.query;
 
