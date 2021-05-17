@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path');
 
 const fastify = require('fastify')({
-    //logger: { level: 'trace' }
+    logger: { level: 'trace' }
 })
 fastify.register(
     require('fastify-compress'),
@@ -18,6 +18,8 @@ let corsi = JSON.parse(rawdata);
 const port = process.env.PORT || 3000;
 
 fastify.get('/corsi', function (request, reply) {
+    console.log(request.headers)
+    
     query = request.query;
 
     res = corsi.corsi;
@@ -64,7 +66,7 @@ fastify.get('/corsi', function (request, reply) {
         })
     }
 
-    reply.send(JSON.stringify(res));
+    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
 })
 
 fastify.get('/master', function (request, reply) {
