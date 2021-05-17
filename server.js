@@ -20,6 +20,9 @@ let corsi = JSON.parse(rawdata);
 
 const port = process.env.PORT || 3000;
 
+fastify.get('/favicon.ico', function (request, reply){
+    reply.code(404)
+})
 
 fastify.get('/corsi', function (request, reply) {
     query = request.query;
