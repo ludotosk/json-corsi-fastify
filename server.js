@@ -64,7 +64,7 @@ fastify.get('/corsi', function (request, reply) {
         })
     }
 
-    reply.send(res);
+    reply.send(JSON.stringify(res));
 })
 
 fastify.get('/master', function (request, reply) {
