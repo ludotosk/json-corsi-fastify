@@ -5,7 +5,7 @@ const key = path.dirname('json-corsi-fastify.key');
 const cert = path.dirname('json-corsi-fastify.crs')
 
 const fastify = require('fastify')({
-    logger: true,
+    logger: { level: 'trace'}
 })
 fastify.register(
     require('fastify-compress'),
@@ -19,11 +19,6 @@ let rawdata = fs.readFileSync(require.resolve('./db.json'));
 let corsi = JSON.parse(rawdata);
 
 const port = process.env.PORT || 3000;
-
-fastify.addHook('preHandler', function (req, reply, done) {
-    req.log.info({ req }, 'request')
-    done()
-})
 
 
 fastify.get('/corsi', function (request, reply) {
