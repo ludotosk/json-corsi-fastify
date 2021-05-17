@@ -20,10 +20,6 @@ let corsi = JSON.parse(rawdata);
 
 const port = process.env.PORT || 3000;
 
-fastify.get('/favicon.ico', function (request, reply){
-    reply.code(404)
-})
-
 fastify.get('/corsi', function (request, reply) {
     query = request.query;
 
@@ -71,7 +67,7 @@ fastify.get('/corsi', function (request, reply) {
         })
     }
 
-    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
+    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n)).code(200);
 })
 
 fastify.get('/master', function (request, reply) {
