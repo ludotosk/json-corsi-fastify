@@ -1,11 +1,8 @@
 const fs = require('fs')
 const path = require('path');
 
-const key = path.dirname('json-corsi-fastify.key');
-const cert = path.dirname('json-corsi-fastify.crs')
-
 const fastify = require('fastify')({
-    logger: { level: 'trace'}
+    //logger: { level: 'trace' }
 })
 fastify.register(
     require('fastify-compress'),
@@ -21,12 +18,9 @@ let corsi = JSON.parse(rawdata);
 const port = process.env.PORT || 3000;
 
 fastify.get('/corsi', function (request, reply) {
-    request.log.info('Dentro la get')
     query = request.query;
 
     res = corsi.corsi;
-
-    request.log.info('Dopo corsi, corsi')
 
     if (query.t != undefined) {
         res = res.filter(function (el) {
@@ -70,8 +64,7 @@ fastify.get('/corsi', function (request, reply) {
         })
     }
 
-    request.log.info('Prima della reply')
-    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n)).code(200);
+    reply.send(res);
 })
 
 fastify.get('/master', function (request, reply) {
