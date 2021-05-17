@@ -20,6 +20,12 @@ let corsi = JSON.parse(rawdata);
 
 const port = process.env.PORT || 3000;
 
+fastify.addHook('preHandler', function (req, reply, done) {
+    req.log.info({ req }, 'request')
+    done()
+})
+
+
 fastify.get('/corsi', function (request, reply) {
     query = request.query;
 
