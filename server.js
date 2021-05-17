@@ -6,8 +6,7 @@ const fastify = require('fastify')({
 })
 fastify.register(
     require('fastify-compress'),
-    { global: true },
-    { encodings: ['gzip', 'deflate'] }
+    { global: false }
 )
 fastify.register(require('fastify-cors'), {
     // put your options here
