@@ -136,6 +136,38 @@ fastify.get('/corsi', function (request, reply) {
         }
     }
 
+    if (query.o != undefined) {
+        if (Array.isArray(query.o)) {
+            var arrRes = []
+            query.o.forEach(function (el1) {
+                arrRes = arrRes.concat(res.filter(function (el2) {
+                    return el2.o == el1;
+                }))
+            })
+            res = arrRes;
+        } else {
+            res = res.filter(function (el) {
+                return el.o == query.o;
+            })
+        }
+    }
+
+    if (query.inter != undefined) {
+        if (Array.isArray(query.inter)) {
+            var arrRes = []
+            query.inter.forEach(function (el1) {
+                arrRes = arrRes.concat(res.filter(function (el2) {
+                    return el2.inter == el1;
+                }))
+            })
+            res = arrRes;
+        } else {
+            res = res.filter(function (el) {
+                return el.inter == query.inter;
+            })
+        }
+    }
+
     reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
 })
 
