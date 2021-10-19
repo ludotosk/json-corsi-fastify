@@ -10,6 +10,8 @@ fastify.register(
 )
 fastify.register(require('fastify-cors'), {
     // put your options here
+    origin: "*",
+    methods: ["GET"]
 })
 
 let rawdata = fs.readFileSync(require.resolve('./db.json'));
