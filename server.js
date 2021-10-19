@@ -24,7 +24,7 @@ fastify.get('/corsi', function (request, reply) {
 
     query = request.query;
 
-    res = corsi.corsi;
+    res = corsi;
 
     if (query.t != undefined) {
         if (Array.isArray(query.t)) {
