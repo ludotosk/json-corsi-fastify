@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "fastify": "^3.15.1",
-    "fastify-compress": "^3.4.2",
-    "fastify-cors": "^6.0.2"
+    "fastify-cors": "^6.0.2",
+    "node-gzip": "^1.1.2"
   },
   "scripts": {
     "start": "node server.js"
@@ -11,7 +11,6 @@
   "version": "1.0.0",
   "description": "Json server per corsi universitari",
   "main": "server.js",
-  "devDependencies": {},
   "author": "Ludovico Toscano",
   "license": "ISC"
 }
