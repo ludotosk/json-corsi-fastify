@@ -1,16 +1,16 @@
 {
-  "dependencies": {
-    "fastify": "^3.15.1",
-    "fastify-cors": "^6.0.2",
-    "node-gzip": "^1.1.2"
-  },
-  "scripts": {
-    "start": "node server.js"
-  },
-  "name": "json-api-fastify",
-  "version": "1.0.0",
-  "description": "Json server per corsi universitari",
-  "main": "server.js",
-  "author": "Ludovico Toscano",
-  "license": "ISC"
+    "dependencies": {
+        "fastify": "^3.15.1",
+        "fastify-cors": "^6.0.2",
+        "node-gzip": "^1.1.2"
+    },
+    "scripts": {
+        "start": "node server.js"
+    },
+    "name": "json-api-fastify",
+    "version": "1.0.0",
+    "description": "Json server per corsi universitari",
+    "main": "server.js",
+    "author": "Ludovico Toscano",
+    "license": "ISC"
 }

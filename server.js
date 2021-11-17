@@ -3,7 +3,8 @@ const path = require('path');
 const { gzip } = require('node-gzip');
 
 const fastify = require('fastify')({
-    logger: { level: 'trace' }
+    logger: { level: 'error' }
+    //logger: { level: 'trace' } per avere il log più verboso
 })
 
 fastify.register(require('fastify-cors'), {
@@ -32,9 +33,9 @@ fastify.addHook('onSend', async(request, reply, payload) => {
     })
 
     if (request.routerPath == '/corsi' && !saved) {
-        console.log('salvataggio e compressione')
+        //console.log('salvataggio e compressione')
         payload = await gzip(payload);
-        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8' })
+        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
         cache.push({
             url: request.raw.url,
             payload
@@ -45,15 +46,15 @@ fastify.addHook('onSend', async(request, reply, payload) => {
 })
 
 fastify.get('/corsi', function(request, reply) {
-    console.log(request.query)
+    //console.log(request.query)
 
     query = request.query;
 
     if (cache.length != 0) {
         cache.forEach((el) => {
             if (el.url == request.url) {
-                console.log('cache')
-                reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8' }).send(el.payload)
+                //console.log('cache')
+                reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
             }
         })
     }
