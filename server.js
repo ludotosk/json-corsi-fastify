@@ -1,6 +1,8 @@
 const fs = require('fs')
-const path = require('path');
 const { gzip } = require('node-gzip');
+//const redis = require('redis');
+
+//const client = redis.createClient(process.env.REDISCLOUD_URL);
 
 const fastify = require('fastify')({
     logger: { level: 'error' }
@@ -13,9 +15,10 @@ fastify.register(require('fastify-cors'), {
     methods: ["GET"]
 })
 
-let rawdata = fs.readFileSync(require.resolve('./db.json'));
-let corsi = JSON.parse(rawdata);
+let corsi = fs.readFileSync(require.resolve('./db.json'));
+corsi = JSON.parse(corsi);
 var cache = []
+    //var cached = false;
 
 const port = process.env.PORT || 3000;
 
@@ -45,6 +48,18 @@ fastify.addHook('onSend', async(request, reply, payload) => {
     return payload
 })
 
+// fastify.addHook('onSend', async(request, reply, payload) => {
+
+//     if (request.routerPath == '/corsi' && !cached) {
+//         console.log('salvataggio e compressione')
+//         payload = await gzip(payload);
+//         client.set(request.raw.url, payload);
+//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
+//     }
+
+//     return payload
+// })
+
 fastify.get('/corsi', function(request, reply) {
     //console.log(request.query)
 
@@ -58,6 +73,18 @@ fastify.get('/corsi', function(request, reply) {
             }
         })
     }
+
+    // client.get(request.raw.url, (err, data) => {
+    //     if (err) throw err;
+
+    //     if (data !== null) {
+    //         console.log('cache')
+    //         cached = true
+    //         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(data)
+    //     } else {
+    //         cached = false
+    //     }
+    // });
 
     res = corsi; //se dovessi rimettere i master questo diventa corsi.corsi
 
@@ -205,7 +232,7 @@ fastify.get('/corsi', function(request, reply) {
         }
     }
 
-    reply.send(res.sort((firstItem, secondItem) => firstItem.n - secondItem.n));
+    reply.send(res);
 })
 
 fastify.get('/master', function(request, reply) {
@@ -293,7 +320,7 @@ fastify.get('/master', function(request, reply) {
         }
     }
 
-    reply.send(res.sort((firstItem, secondItem) => firstItem.corso - secondItem.corso));
+    reply.send(res);
 })
 
 fastify.get('/', function(request, reply) {
