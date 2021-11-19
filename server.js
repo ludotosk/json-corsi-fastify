@@ -1,8 +1,9 @@
 const fs = require('fs')
 const { gzip } = require('node-gzip');
-//const redis = require('redis');
 
-//const client = redis.createClient(process.env.REDISCLOUD_URL);
+// const redis = require('redis');
+// const client = redis.createClient({ return_buffers: true });
+// var cached = false;
 
 const fastify = require('fastify')({
     logger: { level: 'error' }
@@ -17,8 +18,9 @@ fastify.register(require('fastify-cors'), {
 
 let corsi = fs.readFileSync(require.resolve('./db.json'));
 corsi = JSON.parse(corsi);
+
 var cache = []
-    //var cached = false;
+
 
 const port = process.env.PORT || 3000;
 
@@ -57,14 +59,20 @@ fastify.addHook('onSend', async(request, reply, payload) => {
 //         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
 //     }
 
+//     //console.log(typeof payload)
+
 //     return payload
 // })
 
-fastify.get('/corsi', function(request, reply) {
-    //console.log(request.query)
+// fastify.addHook('onSend', async(request, reply, payload) => {
 
-    query = request.query;
+//     payload = await gzip(payload)
+//     reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
 
+//     return payload
+// })
+
+fastify.addHook('onRequest', (request, reply, done) => {
     if (cache.length != 0) {
         cache.forEach((el) => {
             if (el.url == request.url) {
@@ -72,19 +80,31 @@ fastify.get('/corsi', function(request, reply) {
                 reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
             }
         })
+    } else {
+        done()
     }
 
     // client.get(request.raw.url, (err, data) => {
     //     if (err) throw err;
 
     //     if (data !== null) {
-    //         console.log('cache')
+    //         //console.log('cache')
     //         cached = true
+    //             //console.log(typeof data)
+    //             //console.log(data)
     //         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(data)
     //     } else {
     //         cached = false
+    //         done()
     //     }
     // });
+
+})
+
+fastify.get('/corsi', function(request, reply) {
+    //console.log(request.query)
+
+    query = request.query;
 
     res = corsi; //se dovessi rimettere i master questo diventa corsi.corsi
 
