@@ -1,17 +1,11 @@
 const fs = require('fs')
 const { gzip } = require('node-gzip');
 
-// const redis = require('redis');
-// const client = redis.createClient({ return_buffers: true });
-// var cached = false;
-
 const fastify = require('fastify')({
-    logger: { level: 'error' }
-    //logger: { level: 'trace' } per avere il log più verboso
+    logger: { level: 'error' } //trace per log più verboso
 })
 
 fastify.register(require('fastify-cors'), {
-    // put your options here
     origin: "*",
     methods: ["GET"]
 })
@@ -24,85 +18,40 @@ var cache = []
 
 const port = process.env.PORT || 3000;
 
-// fastify.addHook('onSend', async(request, reply, payload) => {
-//     var saved = false;
+fastify.addHook('onSend', async(request, reply, payload) => {
+    var saved = false;
 
-//     if (cache.length >= 100) {
-//         cache.shift()
-//     }
+    if (cache.length >= 100) {
+        cache.shift()
+    }
 
-//     cache.forEach((el) => {
-//         if (el.url == request.url) {
-//             saved = true
-//         }
-//     })
+    cache.forEach((el) => {
+        if (el.url == request.url) {
+            saved = true
+        }
+    })
 
-//     if (request.routerPath == '/corsi' && !saved) {
-//         //console.log('salvataggio e compressione')
-//         payload = await gzip(payload);
-//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
-//         cache.push({
-//             url: request.raw.url,
-//             payload
-//         })
-//     }
+    if (request.routerPath == '/corsi' && !saved) {
+        //console.log('salvataggio e compressione')
+        payload = await gzip(payload);
+        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
+        cache.push({
+            url: request.raw.url,
+            payload
+        })
+    }
 
-//     return payload
-// })
-
-// fastify.addHook('onSend', async(request, reply, payload) => {
-
-//     if (request.routerPath == '/corsi' && !cached) {
-//         console.log('salvataggio e compressione')
-//         payload = await gzip(payload);
-//         client.set(request.raw.url, payload);
-//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
-//     }
-
-//     //console.log(typeof payload)
-
-//     return payload
-// })
-
-// fastify.addHook('onSend', async(request, reply, payload) => {
-
-//     payload = await gzip(payload)
-//     reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
-
-//     return payload
-// })
-
-// fastify.addHook('onRequest', (request, reply, done) => {
-//     if (cache.length != 0) {
-//         cache.forEach((el) => {
-//             if (el.url == request.url) {
-//                 //console.log('cache')
-//                 reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
-//             }
-//         })
-//     } else {
-//         done()
-//     }
-
-// client.get(request.raw.url, (err, data) => {
-//     if (err) throw err;
-
-//     if (data !== null) {
-//         //console.log('cache')
-//         cached = true
-//             //console.log(typeof data)
-//             //console.log(data)
-//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(data)
-//     } else {
-//         cached = false
-//         done()
-//     }
-// });
-
-// })
+    return payload
+})
 
 fastify.get('/corsi', function(request, reply) {
-    //console.log(request.query)
+
+    cache.forEach((el) => {
+        if (el.url == request.url) {
+            //console.log('cache')
+            reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
+        }
+    })
 
     query = request.query;
 
@@ -248,94 +197,6 @@ fastify.get('/corsi', function(request, reply) {
         } else {
             res = res.filter(function(el) {
                 return el.inter == query.inter;
-            })
-        }
-    }
-
-    reply.send(res);
-})
-
-fastify.get('/master', function(request, reply) {
-    query = request.query;
-
-    res = corsi.master;
-
-    if (query.uni != undefined) {
-        if (Array.isArray(query.uni)) {
-            var arrRes = []
-            query.uni.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.uni == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.uni == query.uni;
-            })
-        }
-    }
-
-    if (query.corso != undefined) {
-        if (Array.isArray(query.corso)) {
-            var arrRes = []
-            query.corso.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.corso == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.corso == query.corso;
-            })
-        }
-    }
-
-    if (query.citta != undefined) {
-        if (Array.isArray(query.citta)) {
-            var arrRes = []
-            query.citta.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.citta == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.citta == query.citta;
-            })
-        }
-    }
-
-    if (query.lingua != undefined) {
-        if (Array.isArray(query.lingua)) {
-            var arrRes = []
-            query.lingua.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.lingua == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.lingua == query.lingua;
-            })
-        }
-    }
-
-    if (query.tipo != undefined) {
-        if (Array.isArray(query.tipo)) {
-            var arrRes = []
-            query.tipo.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.tipo == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.tipo == query.tipo;
             })
         }
     }
