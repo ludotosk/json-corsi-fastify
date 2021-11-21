@@ -24,31 +24,31 @@ var cache = []
 
 const port = process.env.PORT || 3000;
 
-fastify.addHook('onSend', async(request, reply, payload) => {
-    var saved = false;
+// fastify.addHook('onSend', async(request, reply, payload) => {
+//     var saved = false;
 
-    if (cache.length >= 100) {
-        cache.shift()
-    }
+//     if (cache.length >= 100) {
+//         cache.shift()
+//     }
 
-    cache.forEach((el) => {
-        if (el.url == request.url) {
-            saved = true
-        }
-    })
+//     cache.forEach((el) => {
+//         if (el.url == request.url) {
+//             saved = true
+//         }
+//     })
 
-    if (request.routerPath == '/corsi' && !saved) {
-        //console.log('salvataggio e compressione')
-        payload = await gzip(payload);
-        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
-        cache.push({
-            url: request.raw.url,
-            payload
-        })
-    }
+//     if (request.routerPath == '/corsi' && !saved) {
+//         //console.log('salvataggio e compressione')
+//         payload = await gzip(payload);
+//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
+//         cache.push({
+//             url: request.raw.url,
+//             payload
+//         })
+//     }
 
-    return payload
-})
+//     return payload
+// })
 
 // fastify.addHook('onSend', async(request, reply, payload) => {
 
@@ -72,34 +72,34 @@ fastify.addHook('onSend', async(request, reply, payload) => {
 //     return payload
 // })
 
-fastify.addHook('onRequest', (request, reply, done) => {
-    if (cache.length != 0) {
-        cache.forEach((el) => {
-            if (el.url == request.url) {
-                //console.log('cache')
-                reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
-            }
-        })
-    } else {
-        done()
-    }
+// fastify.addHook('onRequest', (request, reply, done) => {
+//     if (cache.length != 0) {
+//         cache.forEach((el) => {
+//             if (el.url == request.url) {
+//                 //console.log('cache')
+//                 reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
+//             }
+//         })
+//     } else {
+//         done()
+//     }
 
-    // client.get(request.raw.url, (err, data) => {
-    //     if (err) throw err;
+// client.get(request.raw.url, (err, data) => {
+//     if (err) throw err;
 
-    //     if (data !== null) {
-    //         //console.log('cache')
-    //         cached = true
-    //             //console.log(typeof data)
-    //             //console.log(data)
-    //         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(data)
-    //     } else {
-    //         cached = false
-    //         done()
-    //     }
-    // });
+//     if (data !== null) {
+//         //console.log('cache')
+//         cached = true
+//             //console.log(typeof data)
+//             //console.log(data)
+//         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(data)
+//     } else {
+//         cached = false
+//         done()
+//     }
+// });
 
-})
+// })
 
 fastify.get('/corsi', function(request, reply) {
     //console.log(request.query)
