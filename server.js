@@ -15,7 +15,6 @@ corsi = JSON.parse(corsi);
 
 var cache = []
 
-
 const port = process.env.PORT || 3000;
 
 fastify.addHook('onSend', async(request, reply, payload) => {
@@ -31,10 +30,9 @@ fastify.addHook('onSend', async(request, reply, payload) => {
         }
     })
 
-    if (request.routerPath == '/corsi' && !saved) {
+    if (request.routerPath != '/' && !saved) {
         //console.log('salvataggio e compressione')
         payload = await gzip(payload);
-        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
         cache.push({
             url: request.raw.url,
             payload
@@ -44,16 +42,8 @@ fastify.addHook('onSend', async(request, reply, payload) => {
     return payload
 })
 
-fastify.get('/corsi', function(request, reply) {
-
-    cache.forEach((el) => {
-        if (el.url == request.url) {
-            //console.log('cache')
-            reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
-        }
-    })
-
-    query = request.query;
+function filtro(query) {
+    console.log('handler')
 
     res = corsi; //se dovessi rimettere i master questo diventa corsi.corsi
 
@@ -201,7 +191,54 @@ fastify.get('/corsi', function(request, reply) {
         }
     }
 
-    reply.send(res);
+    return res;
+}
+
+fastify.get('/corsi', function(request, reply) {
+    var saved = false;
+
+    cache.forEach((el) => {
+        if (el.url == request.url) {
+            //console.log('cache')
+            saved = true;
+            reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
+        }
+    })
+
+    if (!saved) {
+
+        query = request.query;
+
+        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'application/json; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
+        reply.send(filtro(query));
+    }
+})
+
+fastify.get('/tabella', function(request, reply) {
+    var saved = false;
+
+    cache.forEach((el) => {
+        if (el.url == request.url) {
+            //console.log('cache')
+            saved = true;
+            reply.headers({ 'content-encoding': 'gzip', 'content-type': 'text/plain; charset=utf-8', 'Cache-control': 'public, max-age=604800' }).send(el.payload)
+        }
+    })
+
+    if (!saved) {
+
+        query = request.query;
+
+        corsiFiltrati = filtro(query);
+
+        var tabella = "";
+        corsiFiltrati.forEach(corso => {
+            tabella += `<tr><td><a target="_blank" rel="noopener" href="${corso.h}">${corso.n}</a></td><td>${corso.s}</td><td>${corso.u}</td></tr>`
+        })
+
+        reply.headers({ 'content-encoding': 'gzip', 'content-type': 'text/plain; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
+        reply.send(tabella);
+    }
 })
 
 fastify.get('/', function(request, reply) {
