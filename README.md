@@ -13,5 +13,5 @@ The issue with compressing pre-built responses is that not all browsers are comp
 I have tried two different solutions for caching data, caching directly in the heap that is usually done in low-level languages or using popular solutions like Redis. I have excluded external solutions like varnish because of the server implementation that I have realized and because at this point isn't already necessary.
 
 I choose the heap because is faster than Redis due to the bottleneck issued from the passing of data between Javascript virtual machine and Redis. In my case is the best solution due to the small amount of data that I store in the heap, but in case I can implement a solution like that one used in the cpu process scheduler.
-## Final thought
+## Final thoughts
 In my case this is the best solution I can provide is simple and it works very well, just to do a comparison I had tested a rust back-end server and it provided 1 ms of latency on my computer this Node.js solution is able to provide 1,2 ms of latency.
