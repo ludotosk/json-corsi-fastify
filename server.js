@@ -2,7 +2,7 @@ const fs = require('fs')
 const { gzip } = require('node-gzip');
 
 const fastify = require('fastify')({
-    logger: { level: 'error' } //trace per log più verboso
+    logger: { level: 'info' } //trace per log più verboso
 })
 
 fastify.register(require('fastify-cors'), {
