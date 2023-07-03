@@ -233,7 +233,7 @@ fastify.get('/tabella', function(request, reply) {
 
         var tabella = "";
         corsiFiltrati.forEach(corso => {
-            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a target="_blank" rel="noopener" href="${corso.h}">${corso.n}</a></td><td class="border px-1">${corso.s}</td><td class="border px-1">${corso.u}</td></tr>`
+            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a target="_blank" class="clickable" rel="noopener" href="${corso.h}">${corso.n}</a></td><td class="border px-1">${corso.s}</td><td class="border px-1">${corso.u}</td></tr>`
         })
 
         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'text/plain; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
