@@ -5,7 +5,7 @@ const fastify = require('fastify')({
     logger: { level: 'info' } //trace per log più verboso
 })
 
-fastify.register(require('fastify-cors'), {
+fastify.register(require('@fastify/cors'), {
     origin: "*",
     methods: ["GET"]
 })
@@ -47,146 +47,100 @@ function filtro(query) {
 
     res = corsi; //se dovessi rimettere i master questo diventa corsi.corsi
 
-    if (query.t != undefined) {
-        if (Array.isArray(query.t)) {
+    if (query.tipo != undefined) {
+        if (Array.isArray(query.tipo)) {
             var arrRes = []
-            query.t.forEach(function(el1) {
+            query.tipo.forEach(function(el1) {
                 arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.t == el1;
+                    return el2.tipo == el1;
                 }))
             })
             res = arrRes;
         } else {
             res = res.filter(function(el) {
-                return el.t == query.t;
+                return el.tipo == query.tipo;
             })
         }
     }
 
-    if (query.n != undefined) {
-        if (Array.isArray(query.n)) {
+    if (query.nome != undefined) {
+        if (Array.isArray(query.nome)) {
             var arrRes = []
-            query.n.forEach(function(el1) {
+            query.nome.forEach(function(el1) {
                 arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.n == el1;
+                    return el2.nome == el1;
                 }))
             })
             res = arrRes;
         } else {
             res = res.filter(function(el) {
-                return el.n == query.n;
+                return el.nome == query.nome;
             })
         }
     }
 
-    if (query.u != undefined) {
-        if (Array.isArray(query.u)) {
+    /** commento i filtri che non uso per evitare di rallentare il tutto
+    if (query.uni != undefined) {
+        if (Array.isArray(query.uni)) {
             var arrRes = []
-            query.u.forEach(function(el1) {
+            query.uni.forEach(function(el1) {
                 arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.u == el1;
+                    return el2.uni == el1;
                 }))
             })
             res = arrRes;
         } else {
             res = res.filter(function(el) {
-                return el.u == query.u;
+                return el.uni == query.uni;
+            })
+        }
+    }
+    */
+
+    if (query.accesso != undefined) {
+        if (Array.isArray(query.accesso)) {
+            var arrRes = []
+            query.accesso.forEach(function(el1) {
+                arrRes = arrRes.concat(res.filter(function(el2) {
+                    return el2.accesso == el1;
+                }))
+            })
+            res = arrRes;
+        } else {
+            res = res.filter(function(el) {
+                return el.accesso == query.accesso;
             })
         }
     }
 
-    if (query.a != undefined) {
-        if (Array.isArray(query.a)) {
+    if (query.lingua != undefined) {
+        if (Array.isArray(query.lingua)) {
             var arrRes = []
-            query.a.forEach(function(el1) {
+            query.lingua.forEach(function(el1) {
                 arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.a == el1;
+                    return el2.lingua == el1;
                 }))
             })
             res = arrRes;
         } else {
             res = res.filter(function(el) {
-                return el.a == query.a;
+                return el.lingua == query.lingua;
             })
         }
     }
 
-    if (query.c != undefined) {
-        if (Array.isArray(query.c)) {
+    if (query.comune != undefined) {
+        if (Array.isArray(query.comune)) {
             var arrRes = []
-            query.c.forEach(function(el1) {
+            query.comune.forEach(function(el1) {
                 arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.c == el1;
+                    return el2.comune == el1;
                 }))
             })
             res = arrRes;
         } else {
             res = res.filter(function(el) {
-                return el.c == query.c;
-            })
-        }
-    }
-
-    if (query.e != undefined) {
-        if (Array.isArray(query.e)) {
-            var arrRes = []
-            query.e.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.e == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.e == query.e;
-            })
-        }
-    }
-
-    if (query.s != undefined) {
-        if (Array.isArray(query.s)) {
-            var arrRes = []
-            query.s.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.s == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.s == query.s;
-            })
-        }
-    }
-
-    if (query.o != undefined) {
-        if (Array.isArray(query.o)) {
-            var arrRes = []
-            query.o.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.o == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.o == query.o;
-            })
-        }
-    }
-
-    if (query.inter != undefined) {
-        if (Array.isArray(query.inter)) {
-            var arrRes = []
-            query.inter.forEach(function(el1) {
-                arrRes = arrRes.concat(res.filter(function(el2) {
-                    return el2.inter == el1;
-                }))
-            })
-            res = arrRes;
-        } else {
-            res = res.filter(function(el) {
-                return el.inter == query.inter;
+                return el.comune == query.comune;
             })
         }
     }
@@ -233,7 +187,7 @@ fastify.get('/tabella', function(request, reply) {
 
         var tabella = "";
         corsiFiltrati.forEach(corso => {
-            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a target="_blank" class="clickable" rel="noopener" href="${corso.h}">${corso.n}</a></td><td class="border px-1">${corso.s}</td><td class="border px-1">${corso.u}</td></tr>`
+            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a target="_blank" rel="noopener" href="${corso.link}">${corso.nome}</a></td><td class="border px-1">${corso.comune}</td><td class="border px-1">${corso.uni}</td></tr>`
         })
 
         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'text/plain; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
@@ -246,7 +200,7 @@ fastify.get('/', function(request, reply) {
 })
 
 // Run the server!
-fastify.listen(port, '0.0.0.0', function(err, address) {
+fastify.listen({port: port}, function(err, address) {
     if (err) {
         fastify.log.error(err)
         process.exit(1)
