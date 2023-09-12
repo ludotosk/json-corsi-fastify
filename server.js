@@ -187,9 +187,9 @@ fastify.get('/tabella', function(request, reply) {
 
         var tabella = "";
         corsiFiltrati.forEach(corso => {
-            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a target="_blank" rel="noopener" href="${corso.link}">${corso.nome}</a></td><td class="border px-1">${corso.comune}</td><td class="border px-1">${corso.uni}</td></tr>`
+            tabella += `<tr class="even:bg-slate-50 hover:bg-slate-100"><td class="text-red-600 border px-1"><a onclick="clickHandler('${corso.nome}','${corso.tipo}','${corso.uni}','${corso.comune}')" target="_blank" rel="noopener" href="${corso.link}">${corso.nome}</a></td><td class="border px-1">${corso.comune}</td><td class="border px-1">${corso.uni}</td></tr>`
         })
-
+        
         reply.headers({ 'content-encoding': 'gzip', 'content-type': 'text/plain; charset=utf-8', 'Cache-control': 'public, max-age=604800' })
         reply.send(tabella);
     }
